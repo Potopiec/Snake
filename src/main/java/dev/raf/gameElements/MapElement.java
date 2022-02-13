@@ -11,7 +11,7 @@ public class MapElement {
     private Rectangle2D.Float body;
     public MapElement(int posX,int posY,Color color){
         this.color = color;
-        body = new Rectangle2D.Float(posX*main.MAP_CELLS,posY*main.MAP_CELLS,main.MAP_CELLS,main.MAP_CELLS);
+        body = new Rectangle2D.Float(posX*main.MAP_CELLS - main.MAP_CELLS,posY*main.MAP_CELLS - main.MAP_CELLS,main.MAP_CELLS,main.MAP_CELLS);
     }
 
 

@@ -17,8 +17,8 @@ public class MapElementsGenerator{
         int posY;
         int posX;
         do {
-            posY = new Random().nextInt(mapHeight);
-            posX = new Random().nextInt(mapWidth);
+            posY = new Random().nextInt(mapHeight-1)+1;
+            posX = new Random().nextInt(mapWidth-1)+1;
         }while(checkGameFieldAvailability(map,posX,posY));
 
         map[posX][posY] = insertRandomField();

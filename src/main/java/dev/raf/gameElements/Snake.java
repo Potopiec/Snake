@@ -3,6 +3,7 @@ package dev.raf.gameElements;
 import java.awt.Point;
 import java.util.ArrayList;
 
+import dev.raf.main;
 import dev.raf.engine.Controller;
 import dev.raf.engine.MovingDirections;
 
@@ -15,9 +16,12 @@ public class Snake {
     private int posX, posY;
     private int previousPosX,previousPosY;
     private int[][] map;
-    private ArrayList<Point> snakeShape;
+    private ArrayList<Point> snakeBody;
     private Controller controller;
     private boolean updating;
+    private boolean sneakIsDead;
+    
+    
     public Snake(int[][] map, int posX, int posY, Controller controller){
         this.map = map;
         this.posX = posX;
@@ -30,8 +34,8 @@ public class Snake {
 
     public void setUpSnake(){
         map[posY][posX] = elementCode;
-        snakeShape = new ArrayList<>();
-        snakeShape.add(new Point(posY,posX));
+        snakeBody = new ArrayList<>();
+        snakeBody.add(new Point(posY,posX));
     }
 
     public void tick() {
@@ -39,8 +43,8 @@ public class Snake {
     	updating = true;
 
         if (controller!= null) {
-            move(controller.getMovingDirection());
-            updateSnakeShape();
+        	moveSnakesHead(controller.getMovingDirection());
+            updateSnakeBody();
             }
         
         
@@ -53,12 +57,10 @@ public class Snake {
         YDirection = 0;
     }
 
-    public void setController(Controller controller) {
-        this.controller = controller;
-    }
+    
 
-    public void move(MovingDirections direction) {
-        if ((controller != null)&&(controller.isFirstClick())){
+    public void moveSnakesHead(MovingDirections direction) {
+        if ((controller != null)&&(controller.isFirstClick())&&(!sneakIsDead)){
 
             switch (direction){
                 case TOP:
@@ -93,64 +95,93 @@ public class Snake {
             posY +=YDirection;
             posX +=XDirection;
 
-            if (map[posY][posX] != 0)
-                hit();
+            hitBox(posX,posY);
 
             map[posY][posX] = elementCode;
-            map[previousPosY][previousPosX] = 0;
-            snakeShape.get(0).setLocation(posY, posX);
+            snakeBody.get(0).setLocation(posY, posX);
         }
     }
     
     
-    public void updateSnakeShape(){
-    	Point previousPoint = null;
+    private void hitBox(int x,int y) {
     	
+    	if(isInsideGameMap(x,y)) {
+    		sneakIsDead = true;
+    	};
+    	
+    	if (map[posY][posX] != 0)
+            hit();
+    	
+    }
     
-    		for(int i = 0; i<snakeShape.size();i++ ) {
+    private boolean isInsideGameMap(int x,int y) {
+    	
+    	if(((x > 0)&&(x<main.MAP_HEIGHT-1))&&((y>0)&&(y<main.MAP_WIDTH-1))) {
+    		return false;
+    		
+    	}else {
+    		return true;
+    		
+    	}
+    	
+    	
+    }
+    
+    
+    public void updateSnakeBody(){
+    	Point previousPoint = null;
+    		
+    	for(int i = 0; i<snakeBody.size();i++ ) {
     			if(i == 0) {
     				previousPoint = new Point(previousPosY,previousPosX);
     			}else {
     			
-    			Point nextPoint = new Point(snakeShape.get(i).x, snakeShape.get(i).y);
+    			Point nextPoint = new Point(snakeBody.get(i).x, snakeBody.get(i).y);
     			
     			if (i > 0) {
-        			snakeShape.set(i, new Point(previousPoint));
+    				snakeBody.set(i, new Point(previousPoint));
         			}
     			
     			previousPoint.setLocation(nextPoint);
     			
-    			}
-    			
-    			
+    			}	
     		}
     		
     		
-		map[previousPoint.x][previousPoint.y] = 0;
-			
-    	if(snakeShape.size() < snakeSize) {
-    		snakeShape.add(new Point(previousPoint));
-    		
-    	}
+    	cleanAfterSnake(previousPoint);
+		
+    	growTheSnake(previousPoint);
     	
     	putSnakeOnMap();
     	
     }
     
     private void putSnakeOnMap() {
-    for(Point p:snakeShape) {
+    for(Point p:snakeBody) {
     	map[p.x][p.y] = elementCode;
-    }	
-    	
+    	}	
     }
     
 
     private void hit(){
         MapElementsGenerator.populateWithEatables(map);
         snakeSize++;
-      
-        System.out.println(snakeSize);
-
+        }
+    
+    private void cleanAfterSnake(Point point) {
+    	map[point.x][point.y] = 0;
+    }
+    
+    private void growTheSnake(Point point) {
+    	if(snakeBody.size() < snakeSize) {
+    		snakeBody.add(new Point(point));
+    		
+    	}
+    }
+    
+   
+    public void setController(Controller controller) {
+        this.controller = controller;
     }
     
     public boolean isUpdating() {
@@ -158,9 +189,12 @@ public class Snake {
     }
     
     public ArrayList<Point> getSnakeBody(){
-    	return snakeShape;
+    	return snakeBody;
     	
     }
+    
+    
+    
 
 
 }

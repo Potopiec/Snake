@@ -10,6 +10,10 @@ import dev.raf.gameElements.Snake;
 import dev.raf.main;
 
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+
 import java.awt.*;
 
 
@@ -28,7 +32,7 @@ public class GameWorld extends JComponent implements Tickable {
     }
 
     public void createWorld(){
-        map = MapElementsGenerator.generateMap();
+        map = MapElementsGenerator.generateMap(); 
         snake = new Snake(map,(int) (main.MAP_HEIGHT/2),(int) (main.MAP_WIDTH/2),gameControlls);
         snake.setUpSnake();
         MapElementsGenerator.populateWithEatables(map);
@@ -53,6 +57,7 @@ public class GameWorld extends JComponent implements Tickable {
         } 
 
         repaint();
+        
     }
 
     @Override
