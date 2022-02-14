@@ -1,13 +1,13 @@
 package dev.raf.engine;
 
 
-import dev.raf.commonInterfaces.Tickable;
+import dev.raf.commonInterfaces.ITickable;
 
 public class GameThread extends Thread {
 
-    private Tickable tickable;
+    private ITickable tickable;
 
-    public GameThread(Tickable tickable){
+    public GameThread(ITickable tickable){
         this.tickable = tickable;
         this.start();
     }

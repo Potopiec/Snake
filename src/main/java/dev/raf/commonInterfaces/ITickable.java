@@ -1,5 +1,5 @@
 package dev.raf.commonInterfaces;
 
-public interface Tickable {
+public interface ITickable {
     void tick();
 }

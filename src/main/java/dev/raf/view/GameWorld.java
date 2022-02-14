@@ -1,12 +1,12 @@
 package dev.raf.view;
 
-import dev.raf.commonInterfaces.Tickable;
+import dev.raf.commonInterfaces.ITickable;
 import dev.raf.engine.GameControlls;
 
 import dev.raf.gameElements.ElementsFactory;
 import dev.raf.gameElements.MapElement;
 import dev.raf.gameElements.MapElementsGenerator;
-import dev.raf.gameElements.Snake;
+import dev.raf.gameElements.snakeElements.Snake;
 import dev.raf.main;
 
 import javax.swing.*;
@@ -17,7 +17,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 
-public class GameWorld extends JComponent implements Tickable {
+public class GameWorld extends JComponent implements ITickable {
 
 
    private GameControlls gameControlls;
@@ -33,8 +33,7 @@ public class GameWorld extends JComponent implements Tickable {
 
     public void createWorld(){
         map = MapElementsGenerator.generateMap(); 
-        snake = new Snake(map,(int) (main.MAP_HEIGHT/2),(int) (main.MAP_WIDTH/2),gameControlls);
-        snake.setUpSnake();
+        snake = new Snake(100,100,gameControlls);
         MapElementsGenerator.populateWithEatables(map);
 
 
@@ -46,15 +45,18 @@ public class GameWorld extends JComponent implements Tickable {
     public void paintComponent(Graphics g){
         Graphics2D g2 = (Graphics2D) g;
         
-        if(!snake.isUpdating()) {
+        if(snake != null)
+        snake.render(g2);
+        
+        //if(!snake.isUpdating()) {
 
-        for (int i = 0; i<map.length;i++){
-            for (int j = 0; j<map[0].length;j++){
-                if (map[i][j] != 0)
-                    ElementsFactory.getElement(map[i][j],i,j).render(g2);
-            }
-        }
-        } 
+        //for (int i = 0; i<map.length;i++){
+            //for (int j = 0; j<map[0].length;j++){
+                //if (map[i][j] != 0)
+                   // ElementsFactory.getElement(map[i][j],i,j).render(g2);
+          //  }
+       // }
+       // } 
 
         repaint();
         
@@ -62,6 +64,7 @@ public class GameWorld extends JComponent implements Tickable {
 
     @Override
     public void tick() {
+    	 if(snake != null)
         snake.tick();
 
     }
